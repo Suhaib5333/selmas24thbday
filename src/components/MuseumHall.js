@@ -2,13 +2,30 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /* ─── data ─── */
+const PHOTO_EXT = { 22: 'png', 23: 'png', 24: 'png' };
+const getPhoto = (id) => `/photos/image${String(id).padStart(5, '0')}.${PHOTO_EXT[id] || 'jpeg'}`;
+
+/* Per-image style overrides for covers */
+const COVER_OVERRIDES = {
+  23: { objectPosition: 'center 55%' },
+};
+
 const FRAMES = [
-  { id: 1, label: "The Mermaid's Dream", top: '4%', left: '3%', rotate: -3, scale: 0.92 },
-  { id: 2, label: 'Fairy Hollow', top: '2%', left: '35%', rotate: 2, scale: 1 },
-  { id: 3, label: 'Moonlit Crochet', top: '5%', left: '68%', rotate: -2, scale: 0.95 },
-  { id: 4, label: 'Crystal Serenade', top: '46%', left: '8%', rotate: 3, scale: 0.9 },
-  { id: 5, label: 'The Enchanted Piano', top: '42%', left: '48%', rotate: -2, scale: 0.98 },
-  { id: 6, label: 'Stardust Library', top: '48%', left: '76%', rotate: 1, scale: 0.88 },
+  { id: 1, cover: 17, label: "The Mermaid's Dream", top: '4%', left: '4%', rotate: -3, scale: 0.95 },
+  { id: 2, cover: 21, label: 'Fairy Hollow', top: '3%', left: '38%', rotate: 2, scale: 1 },
+  { id: 3, cover: 5, label: 'Moonlit Crochet', top: '5%', left: '70%', rotate: -2, scale: 0.93 },
+  { id: 4, cover: 23, label: 'Crystal Serenade', top: '48%', left: '12%', rotate: 3, scale: 0.96 },
+  { id: 5, cover: 10, label: 'Enchanted Piano', top: '46%', left: '54%', rotate: -1, scale: 0.98 },
+];
+
+/* Extra decorative frames (picsum) to fill the hall — not clickable */
+const DECO_FRAMES = [
+  { src: 'https://picsum.photos/seed/selmaA/400/300', top: '6%', left: '22%', rotate: 1, scale: 0.72 },
+  { src: 'https://picsum.photos/seed/selmaB/400/300', top: '8%', left: '56%', rotate: -2, scale: 0.68 },
+  { src: 'https://picsum.photos/seed/selmaC/400/300', top: '50%', left: '36%', rotate: 2, scale: 0.7 },
+  { src: 'https://picsum.photos/seed/selmaD/400/300', top: '52%', left: '74%', rotate: -1, scale: 0.65 },
+  { src: 'https://picsum.photos/seed/selmaE/400/300', top: '2%', left: '88%', rotate: 3, scale: 0.6 },
+  { src: 'https://picsum.photos/seed/selmaF/400/300', top: '48%', left: '88%', rotate: -2, scale: 0.62 },
 ];
 
 const PORTALS = [
@@ -193,7 +210,7 @@ function MuseumHall({ onOpenGame, onOpenLetter, onOpenLightbox, onOpenPiano, bad
             transform: `rotate(${frame.rotate}deg)`,
             cursor: 'pointer',
             zIndex: 10,
-            width: 'clamp(180px, 20vw, 280px)',
+            width: 'clamp(200px, 24vw, 320px)',
           }}
         >
           {/* frame.png with photo inside */}
@@ -216,20 +233,20 @@ function MuseumHall({ onOpenGame, onOpenLetter, onOpenLightbox, onOpenPiano, bad
             <div
               style={{
                 position: 'absolute',
-                top: '16%',
-                left: '14%',
-                right: '14%',
-                bottom: '16%',
+                top: '24%',
+                left: '20%',
+                right: '20%',
+                bottom: '24%',
                 overflow: 'hidden',
                 zIndex: 1,
                 background: '#2a1f3d',
               }}
             >
               <img
-                src={`https://picsum.photos/seed/selma${frame.id}/400/300`}
+                src={getPhoto(frame.cover)}
                 alt={frame.label}
                 draggable={false}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: COVER_OVERRIDES[frame.cover]?.objectPosition || 'center 30%', display: 'block' }}
                 loading="lazy"
               />
             </div>
@@ -249,6 +266,50 @@ function MuseumHall({ onOpenGame, onOpenLetter, onOpenLightbox, onOpenPiano, bad
           >
             {frame.label}
           </p>
+        </motion.div>
+      ))}
+
+      {/* ── Decorative filler frames (not clickable) ── */}
+      {DECO_FRAMES.map((deco, idx) => (
+        <motion.div
+          key={`deco-${idx}`}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 0.55, y: 0, scale: deco.scale }}
+          transition={{ delay: 0.8 + idx * 0.12, duration: 0.6 }}
+          style={{
+            position: 'absolute',
+            top: deco.top,
+            left: deco.left,
+            transform: `rotate(${deco.rotate}deg)`,
+            pointerEvents: 'none',
+            zIndex: 5,
+            width: 'clamp(100px, 12vw, 160px)',
+          }}
+        >
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '1.33/1' }}>
+            <img
+              src="/frame.png"
+              alt=""
+              draggable={false}
+              style={{
+                position: 'absolute', inset: 0, width: '100%', height: '100%',
+                objectFit: 'fill', zIndex: 2, pointerEvents: 'none',
+                filter: 'drop-shadow(0 3px 12px rgba(0,0,0,0.5))',
+              }}
+            />
+            <div style={{
+              position: 'absolute', top: '24%', left: '20%', right: '20%', bottom: '24%',
+              overflow: 'hidden', zIndex: 1, background: '#2a1f3d',
+            }}>
+              <img
+                src={deco.src}
+                alt=""
+                draggable={false}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }}
+                loading="lazy"
+              />
+            </div>
+          </div>
         </motion.div>
       ))}
 

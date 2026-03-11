@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#2d1b69"/>
+      <stop offset="70%" stop-color="#150a30"/>
+      <stop offset="100%" stop-color="#0d0518"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5e6b8"/>
+      <stop offset="30%" stop-color="#c9a84c"/>
+      <stop offset="60%" stop-color="#e8d5a3"/>
+      <stop offset="100%" stop-color="#8b6914"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f5e6b8"/>
+      <stop offset="50%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#a07c28"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="35%">
+      <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="32" cy="32" r="31" fill="url(#bg)"/>
+  <!-- Golden border ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Warm inner glow -->
+  <circle cx="32" cy="30" r="22" fill="url(#glow)"/>
+
+  <!-- Ornate crown / tiara -->
+  <g opacity="0.95">
+    <!-- Crown base band -->
+    <path d="M18 19 Q32 21 46 19" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Crown points -->
+    <path d="M19 19 L22 11 L26.5 16 L32 8 L37.5 16 L42 11 L45 19" fill="none" stroke="url(#gold2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Crown jewels -->
+    <circle cx="32" cy="10.5" r="2" fill="#e74c7a" opacity="0.85"/>
+    <circle cx="22.5" cy="13" r="1.3" fill="#80deea" opacity="0.8"/>
+    <circle cx="41.5" cy="13" r="1.3" fill="#b388ff" opacity="0.8"/>
+    <!-- Crown jewel sparkle -->
+    <circle cx="31" cy="9.5" r="0.6" fill="white" opacity="0.7"/>
+  </g>
+
+  <!-- Number 24 -->
+  <text x="32" y="42" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="24" fill="url(#gold)" letter-spacing="1">24</text>
+  <!-- Text shadow/outline for depth -->
+  <text x="32.5" y="42.5" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="24" fill="#1a0a2e" opacity="0.3" letter-spacing="1">24</text>
+  <!-- Text on top again -->
+  <text x="32" y="42" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="24" fill="url(#gold)" letter-spacing="1">24</text>
+
+  <!-- Decorative line under 24 -->
+  <path d="M22 46 Q27 48 32 46 Q37 44 42 46" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+
+  <!-- Four-point star sparkles -->
+  <g fill="#c9a84c">
+    <!-- Top right sparkle -->
+    <path d="M50 14 L51 11 L52 14 L55 15 L52 16 L51 19 L50 16 L47 15Z" opacity="0.8"/>
+    <!-- Bottom left sparkle -->
+    <path d="M11 48 L12 45.5 L13 48 L15.5 49 L13 50 L12 52.5 L11 50 L8.5 49Z" opacity="0.7"/>
+    <!-- Small top left -->
+    <path d="M13 22 L13.7 20.5 L14.4 22 L16 22.7 L14.4 23.4 L13.7 25 L13 23.4 L11.3 22.7Z" opacity="0.5" fill="#e8d5a3"/>
+    <!-- Small bottom right -->
+    <path d="M48 44 L48.7 42.5 L49.4 44 L51 44.7 L49.4 45.4 L48.7 47 L48 45.4 L46.3 44.7Z" opacity="0.5" fill="#e8d5a3"/>
+  </g>
+
+  <!-- Tiny dot sparkles scattered -->
+  <circle cx="9" cy="34" r="0.8" fill="#e8d5a3" opacity="0.5"/>
+  <circle cx="55" cy="30" r="0.8" fill="#e8d5a3" opacity="0.4"/>
+  <circle cx="26" cy="54" r="0.7" fill="#c9a84c" opacity="0.4"/>
+  <circle cx="40" cy="52" r="0.7" fill="#c9a84c" opacity="0.45"/>
+  <circle cx="17" cy="38" r="0.5" fill="#f5e6b8" opacity="0.3"/>
+  <circle cx="47" cy="24" r="0.5" fill="#f5e6b8" opacity="0.3"/>
+</svg>

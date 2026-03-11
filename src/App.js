@@ -14,38 +14,55 @@ import BadgeDownloader from './components/BadgeDownloader';
 import Piano from './components/Piano';
 import SoundManager from './utils/SoundManager';
 
-/* ── Lightbox ── */
-const FRAME_LABELS = {
-  1: "The Mermaid's Dream",
-  2: 'Fairy Hollow',
-  3: 'Moonlit Crochet',
-  4: 'Crystal Serenade',
-  5: 'The Enchanted Piano',
-  6: 'Stardust Library',
-  7: 'The Pearl Garden',
-  8: 'Whimsical Dreams',
+/* ── Gallery frames — each frame holds a group of photos ── */
+const GALLERY_FRAMES = [
+  { id: 1, label: "The Mermaid's Dream", images: [17, 3, 22, 9, 14] },
+  { id: 2, label: 'Fairy Hollow',        images: [21, 19, 1, 24, 11] },
+  { id: 3, label: 'Moonlit Crochet',     images: [5, 16, 8, 12, 7] },
+  { id: 4, label: 'Crystal Serenade',    images: [23, 4, 13, 18, 15] },
+  { id: 5, label: 'Enchanted Piano',     images: [10, 20, 6, 2] },
+];
+
+/* Images 1-21 are .jpeg, 22-24 are .png */
+const PHOTO_EXT = { 22: 'png', 23: 'png', 24: 'png' };
+const getPhoto = (id) => `/photos/image${String(id).padStart(5, '0')}.${PHOTO_EXT[id] || 'jpeg'}`;
+
+/* Per-image style overrides for proper framing */
+const PHOTO_OVERRIDES = {
+  16: { transform: 'rotate(-90deg) scale(0.75)', objectPosition: 'center center' },   // Moonlit Crochet pic 2 — rotate left 90°, zoom out
+  14: { transform: 'rotate(-90deg) scale(0.75)', objectPosition: 'center center' },   // Mermaid's Dream last pic — rotate left 90°, zoom out
+  7:  { objectPosition: 'center 60%' },   // Moonlit Crochet last — shift down to show bodies
+  22: { objectPosition: 'center 45%' },   // Mermaid's Dream pic 3 — centered
+  23: { objectPosition: 'center 55%' },   // Crystal Serenade pic 1 — faces + text below
+  24: { objectPosition: 'center 65%' },   // Fairy Hollow pic 4 — shift down, show full bodies
 };
 
-const ALL_FRAME_IDS = Object.keys(FRAME_LABELS).map(Number);
+function Lightbox({ frameData, onClose }) {
+  const [currentIdx, setCurrentIdx] = React.useState(0);
 
-function Lightbox({ imageId, onClose, onNavigate }) {
-  if (!imageId) return null;
+  // Reset index when frame changes
+  React.useEffect(() => { setCurrentIdx(0); }, [frameData]);
 
-  const currentIdx = ALL_FRAME_IDS.indexOf(imageId);
+  if (!frameData) return null;
+
+  const { label, images } = frameData;
+
   const hasPrev = currentIdx > 0;
-  const hasNext = currentIdx < ALL_FRAME_IDS.length - 1;
+  const hasNext = currentIdx < images.length - 1;
 
-  const goPrev = (e) => { e.stopPropagation(); onNavigate(ALL_FRAME_IDS[currentIdx - 1]); };
-  const goNext = (e) => { e.stopPropagation(); onNavigate(ALL_FRAME_IDS[currentIdx + 1]); };
+  const goPrev = (e) => { e.stopPropagation(); if (hasPrev) setCurrentIdx((i) => i - 1); };
+  const goNext = (e) => { e.stopPropagation(); if (hasNext) setCurrentIdx((i) => i + 1); };
 
-  // Touch swipe support
+  // Touch swipe support (left to right only)
   let touchStartX = 0;
   const handleTouchStart = (e) => { touchStartX = e.touches[0].clientX; };
   const handleTouchEnd = (e) => {
     const diff = touchStartX - e.changedTouches[0].clientX;
-    if (diff > 50 && hasNext) onNavigate(ALL_FRAME_IDS[currentIdx + 1]);
-    else if (diff < -50 && hasPrev) onNavigate(ALL_FRAME_IDS[currentIdx - 1]);
+    if (diff > 50 && hasNext) setCurrentIdx((i) => i + 1);
+    else if (diff < -50 && hasPrev) setCurrentIdx((i) => i - 1);
   };
+
+  const photoId = images[currentIdx];
 
   return (
     <motion.div
@@ -93,7 +110,7 @@ function Lightbox({ imageId, onClose, onNavigate }) {
 
         <div style={{
           position: 'relative',
-          width: 'min(60vw, 580px)',
+          width: 'min(85vw, 900px)',
           aspectRatio: '4 / 3',
         }}>
           {/* Ornate frame overlay */}
@@ -114,33 +131,47 @@ function Lightbox({ imageId, onClose, onNavigate }) {
           {/* Photo inside — clipped to sit within the ornate border */}
           <div style={{
             position: 'absolute',
-            top: '16%',
-            left: '14%',
-            right: '14%',
-            bottom: '16%',
+            top: '24%',
+            left: '20%',
+            right: '20%',
+            bottom: '24%',
             overflow: 'hidden',
             zIndex: 1,
           }}>
             <img
-              src={`https://picsum.photos/seed/selma${imageId}/800/600`}
-              alt={FRAME_LABELS[imageId] || 'Gallery'}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              src={getPhoto(photoId)}
+              alt={label}
+              style={{
+                width: PHOTO_OVERRIDES[photoId]?.transform ? '140%' : '100%',
+                height: PHOTO_OVERRIDES[photoId]?.transform ? '140%' : '100%',
+                objectFit: 'cover',
+                objectPosition: PHOTO_OVERRIDES[photoId]?.objectPosition || 'center 30%',
+                display: 'block',
+                ...(PHOTO_OVERRIDES[photoId]?.transform ? {
+                  transform: PHOTO_OVERRIDES[photoId].transform,
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-70%',
+                  marginLeft: '-70%',
+                } : {}),
+              }}
             />
           </div>
         </div>
-        <p className="lightbox-label">{FRAME_LABELS[imageId] || ''}</p>
+        <p className="lightbox-label">{label}</p>
 
         {/* Dot indicators */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 10 }}>
-          {ALL_FRAME_IDS.map((id) => (
+          {images.map((imgId, i) => (
             <span
-              key={id}
-              onClick={(e) => { e.stopPropagation(); onNavigate(id); }}
+              key={imgId}
+              onClick={(e) => { e.stopPropagation(); setCurrentIdx(i); }}
               style={{
-                width: id === imageId ? 16 : 8,
+                width: i === currentIdx ? 16 : 8,
                 height: 8,
                 borderRadius: 4,
-                background: id === imageId ? '#c9a84c' : 'rgba(201,168,76,0.3)',
+                background: i === currentIdx ? '#c9a84c' : 'rgba(201,168,76,0.3)',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
               }}
@@ -155,7 +186,112 @@ function Lightbox({ imageId, onClose, onNavigate }) {
 /* ══════════════════════════════════════════
    APP
    ══════════════════════════════════════════ */
+const MUSEUM_PASSWORD = 'hogwarts123';
+
+function PasswordGate({ onUnlock }) {
+  const [pw, setPw] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (pw === MUSEUM_PASSWORD) {
+      localStorage.setItem('selma24_unlocked', 'true');
+      onUnlock();
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 1500);
+    }
+  };
+
+  return (
+    <motion.div
+      className="password-gate"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 99999,
+        background: 'radial-gradient(ellipse at center, #1a0a2e 0%, #0d0518 100%)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        fontFamily: "'Cormorant Garamond', serif",
+      }}
+    >
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.8 }}
+        style={{ textAlign: 'center' }}
+      >
+        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔮</div>
+        <h2 style={{
+          fontFamily: "'Cinzel Decorative', cursive",
+          color: '#c9a84c',
+          fontSize: 'clamp(1.4rem, 4vw, 2rem)',
+          marginBottom: '0.5rem',
+        }}>
+          The Museum Awaits
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', marginBottom: '2rem' }}>
+          Speak the secret word to enter
+        </p>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <motion.input
+            type="password"
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            placeholder="Enter password..."
+            animate={error ? { x: [-10, 10, -10, 10, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            style={{
+              width: 'min(280px, 80vw)',
+              padding: '0.8rem 1.2rem',
+              borderRadius: '12px',
+              border: error ? '2px solid #e74c3c' : '2px solid rgba(201,168,76,0.4)',
+              background: 'rgba(255,255,255,0.05)',
+              color: '#f5f0e8',
+              fontSize: '1.1rem',
+              textAlign: 'center',
+              outline: 'none',
+              fontFamily: "'Cormorant Garamond', serif",
+            }}
+            autoFocus
+          />
+          {error && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{ color: '#e74c3c', fontSize: '0.9rem', margin: 0 }}
+            >
+              Wrong password, try again!
+            </motion.p>
+          )}
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(201,168,76,0.4)' }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              padding: '0.7rem 2.5rem',
+              borderRadius: '30px',
+              border: '2px solid #c9a84c',
+              background: 'linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05))',
+              color: '#c9a84c',
+              fontSize: '1.1rem',
+              cursor: 'pointer',
+              fontFamily: "'Cinzel Decorative', cursive",
+            }}
+          >
+            Enter
+          </motion.button>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function App() {
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return localStorage.getItem('selma24_unlocked') === 'true'; } catch { return false; }
+  });
   const [entered, setEntered] = useState(() => {
     try { return JSON.parse(localStorage.getItem('selma24_entered')) || false; } catch { return false; }
   });
@@ -167,7 +303,7 @@ function App() {
     try { return JSON.parse(localStorage.getItem('selma24_badges')) || { gem: false, wizard: false, pearl: false }; } catch { return { gem: false, wizard: false, pearl: false }; }
   });
   const [showBadgeModal, setShowBadgeModal] = useState(null); // null | 'gem' | 'wizard' | 'pearl'
-  const [lightboxImage, setLightboxImage] = useState(null);
+  const [lightboxFrame, setLightboxFrame] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showPiano, setShowPiano] = useState(false);
   const appRef = useRef(null);
@@ -213,6 +349,7 @@ function App() {
   const handleReset = useCallback(() => {
     localStorage.removeItem('selma24_badges');
     localStorage.removeItem('selma24_entered');
+    localStorage.removeItem('selma24_unlocked');
     SoundManager.stopAmbient();
     window.location.reload();
   }, []);
@@ -259,12 +396,13 @@ function App() {
   }, []);
 
   /* lightbox */
-  const handleOpenLightbox = useCallback((id) => {
-    setLightboxImage(id);
+  const handleOpenLightbox = useCallback((frameId) => {
+    const frame = GALLERY_FRAMES.find((f) => f.id === frameId);
+    if (frame) setLightboxFrame(frame);
   }, []);
 
   const handleCloseLightbox = useCallback(() => {
-    setLightboxImage(null);
+    setLightboxFrame(null);
   }, []);
 
   /* piano */
@@ -282,6 +420,10 @@ function App() {
   const handleCloseBadgeModal = useCallback(() => {
     setShowBadgeModal(null);
   }, []);
+
+  if (!unlocked) {
+    return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  }
 
   return (
     <div className="App" ref={appRef}>
@@ -399,8 +541,8 @@ function App() {
 
           {/* ── Lightbox ── */}
           <AnimatePresence>
-            {lightboxImage && (
-              <Lightbox key="lightbox" imageId={lightboxImage} onClose={handleCloseLightbox} onNavigate={setLightboxImage} />
+            {lightboxFrame && (
+              <Lightbox key="lightbox" frameData={lightboxFrame} onClose={handleCloseLightbox} />
             )}
           </AnimatePresence>
 
