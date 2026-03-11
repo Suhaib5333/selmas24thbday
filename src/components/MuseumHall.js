@@ -251,21 +251,6 @@ function MuseumHall({ onOpenGame, onOpenLetter, onOpenLightbox, onOpenPiano, bad
               />
             </div>
           </div>
-          {/* label */}
-          <p
-            style={{
-              textAlign: 'center',
-              fontFamily: "'Cinzel Decorative', cursive",
-              fontSize: 'clamp(0.5rem, 0.8vw, 0.72rem)',
-              color: '#c9a84c',
-              letterSpacing: 2,
-              textTransform: 'uppercase',
-              marginTop: 8,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {frame.label}
-          </p>
         </motion.div>
       ))}
 

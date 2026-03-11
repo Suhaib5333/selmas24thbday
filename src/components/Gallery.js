@@ -48,7 +48,6 @@ function Gallery({ onCollectGem }) {
                   <div className="frame-image-wrapper">
                     <img src={getImage(item.id)} alt={item.label} loading="lazy" />
                   </div>
-                  <div className="frame-label">{item.label}</div>
                 </div>
               </div>
             </div>
@@ -93,7 +92,6 @@ function Gallery({ onCollectGem }) {
                   <img src={getImage(lightbox.id)} alt={lightbox.label} />
                 </div>
               </div>
-              <div className="lightbox-label">{lightbox.label}</div>
             </motion.div>
           </motion.div>
         )}

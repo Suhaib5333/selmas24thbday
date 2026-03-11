@@ -159,7 +159,6 @@ function Lightbox({ frameData, onClose }) {
             />
           </div>
         </div>
-        <p className="lightbox-label">{label}</p>
 
         {/* Dot indicators */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 10 }}>
