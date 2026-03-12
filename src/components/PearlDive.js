@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from './Confetti';
 import SoundManager from '../utils/SoundManager';
 
-const GAME_DURATION = 30;
+const GAME_DURATION = 120;
 const WIN_TARGET = 15;
 const SPAWN_INTERVAL_START = 800;
 const SPAWN_INTERVAL_MIN = 350;
