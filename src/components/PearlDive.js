@@ -5,10 +5,10 @@ import SoundManager from '../utils/SoundManager';
 
 const GAME_DURATION = 120;
 const WIN_TARGET = 15;
-const SPAWN_INTERVAL_START = 800;
-const SPAWN_INTERVAL_MIN = 350;
-const RISE_DURATION_START = 4.5;
-const RISE_DURATION_MIN = 2.2;
+const SPAWN_INTERVAL_START = 1200;
+const SPAWN_INTERVAL_MIN = 700;
+const RISE_DURATION_START = 10;
+const RISE_DURATION_MIN = 6;
 
 const PEARL_EMOJIS = ['🤍', '💖', '💙', '💜', '🤍'];
 const BUBBLE_SIZES = [52, 58, 64, 70];
